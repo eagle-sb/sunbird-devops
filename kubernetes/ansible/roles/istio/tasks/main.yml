@@ -8,7 +8,7 @@
     - istio
 
 - name: check helm release
-  shell: "helm ls --all-namespaces | awk '{print $1}' | grep -E istio-init"
+  shell: "helm ls --all-namespaces | awk '{print $1}' | grep -E '^istio-init$'"
   register: output
   ignore_errors: true
 
@@ -43,7 +43,7 @@
       EOF
 
 - name: check helm release
-  shell: "helm ls --all-namespaces | awk '{print $1}' | grep -E istio"
+  shell: "helm ls --all-namespaces | awk '{print $1}' | grep -E '^istio$'"
   register: output
   ignore_errors: true
 
