@@ -3,7 +3,15 @@
     src: "{{ chart_path }}/values.j2"
     dest: "{{ chart_path }}/values.yaml"
 
+- name: check helm release
+  shell: helm ls --all-namespaces | awk '{print $1}' | grep -E "^{{ release_name }}$"
+  register: output
+  ignore_errors: true
 
 - name: helm install
-  shell: helm upgrade --install --force --force --cleanup-on-fail {{ release_name }} {{ chart_path }} -n logging
-  #shell: helm template {{ chart_path }} > /tmp/test.yaml
+  shell: helm install {{ release_name }} {{ chart_path }} -n logging
+  when: output.rc == 1
+
+- name: helm upgrade
+  shell: helm upgrade --recreate-pods {{ release_name }} {{ chart_path }} -n logging
+  when: output.rc == 0

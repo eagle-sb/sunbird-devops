@@ -4,6 +4,7 @@
     dest: "{{ chart_path }}/values.yaml"
 
 - name: check helm release
+  shell: helm ls --all-namespaces | awk '{print $1}' | grep -E "^{{ release_name }}$"
   register: output
   ignore_errors: true
 
