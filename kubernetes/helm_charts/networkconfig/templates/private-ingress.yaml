@@ -4,6 +4,7 @@ metadata:
   name: ingressgateway-private
   annotations:
     istio: ingressgateway-private
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
   namespace: istio-system
 spec:
   type: LoadBalancer
