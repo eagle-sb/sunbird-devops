@@ -31,5 +31,14 @@
         passphrase: "{{ grafana_admin_password | b64encode }}"
       EOF
 
-- name: installing istio
-  shell: helm upgrade --install --cleanup-on-fail istio {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+- name: check helm release
+  register: output
+  ignore_errors: true
+
+- name: helm install
+  shell: helm install {{ release_name }} {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+  when: output.rc == 1
+
+- name: helm upgrade
+  shell: helm upgrade --cleanup-on-fail {{ release_name }} {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+  when: output.rc == 0

@@ -3,10 +3,17 @@
     src: "{{ chart_path }}/values.j2"
     dest: "{{ chart_path }}/values.yaml"
 
+- name: check helm release
+  register: output
+  ignore_errors: true
 
 - name: helm install
-  shell: helm upgrade --install --cleanup-on-fail {{ release_name }} {{ chart_path }} -n {{namespace}}
-  #shell: helm template {{ chart_path }} > /tmp/test.yaml
+  shell: helm install {{ release_name }} {{ chart_path }} -n {{namespace}}
+  when: output.rc == 1
+
+- name: helm upgrade
+  shell: helm upgrade --cleanup-on-fail {{ release_name }} {{ chart_path }} -n {{namespace}}
+  when: output.rc == 0
 
 - name: Get the deployment rollout status
   shell: "kubectl get deployments -A | grep -i {{ release_name }} | awk -F' ' '{print $3}' | awk -F/ '{if ($1 ~ $2){exit 0} else {exit 1}}'"
