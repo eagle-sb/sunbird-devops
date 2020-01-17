@@ -30,5 +30,5 @@ gateways:
   istio-ingressgateway:
     sds:
       enabled: true
-    type: NodePort
+    type: LoadBalancer
     externalTrafficPolicy: Local
