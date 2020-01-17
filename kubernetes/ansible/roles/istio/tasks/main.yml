@@ -7,8 +7,19 @@
   with_items:
     - istio
 
-- name: initializing istio-crds
-  shell: helm upgrade --install --cleanup-on-fail istio-init {{ chart_path }}/istio-init --namespace istio-system
+- name: check helm release
+  shell: "helm ls --all-namespaces | awk '{print $1}' | grep -E istio-init"
+  register: output
+  ignore_errors: true
+
+- name: helm install
+  shell: helm install istio-init {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+  when: output.rc == 1
+
+- name: helm upgrade
+  shell: helm upgrade --cleanup-on-fail istio-init {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+  when: output.rc == 0
+
 
 - name: waiting for crds to get completed
   pause:
@@ -32,14 +43,14 @@
       EOF
 
 - name: check helm release
-  shell: helm ls --all-namespaces | awk '{print $1}' | grep -E "^{{ release_name }}$"
+  shell: "helm ls --all-namespaces | awk '{print $1}' | grep -E istio"
   register: output
   ignore_errors: true
 
 - name: helm install
-  shell: helm install {{ release_name }} {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+  shell: helm install istio {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
   when: output.rc == 1
 
 - name: helm upgrade
-  shell: helm upgrade --cleanup-on-fail {{ release_name }} {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
+  shell: helm upgrade --cleanup-on-fail istio {{ chart_path }}/istio --namespace istio-system -f /tmp/istio.yaml
   when: output.rc == 0
