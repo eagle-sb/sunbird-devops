@@ -6,6 +6,7 @@ services:
     ports:
       - "443:443"
       - "80:80"
+      - "3007:3007"
     deploy:
       mode: global
       resources:
