@@ -15,7 +15,7 @@
     - ['{{inventory_dir}}/secrets.yml', 'secrets/{{env}}.yml']
   roles:
     - openjdk
-    - application_elasticsearch
+  #  - application_elasticsearch
     - curl_es_command
   tags:
     - es
