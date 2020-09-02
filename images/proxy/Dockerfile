@@ -1,4 +1,4 @@
-FROM nginx:1.13.8-alpine
+FROM nginx:nginx:1.18.0-alpine
 
 RUN rm -rf /etc/nginx/conf.d
 
